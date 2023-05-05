@@ -8,7 +8,7 @@ Because I backed the project during its Kickstarter campaign, I received exclusi
 
 > That is, **codes are static depending on the type of reward** you get.
 
-That's why, within my _gamer greed_, I wanted to study a bit the code checking process to know if I was able to unlock all the Kickstarter content. **And in this article I explain you how to do it**.
+That's why, within my _gamer greed_, I wanted to study a bit the code checking process to know if I was able to unlock all the Kickstarter content. **And this article explains how to do it**.
 
 ## 🧰 Tools
 
