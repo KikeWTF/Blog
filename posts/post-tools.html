@@ -1,0 +1,58 @@
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const titleBlock = document.querySelector("#title-block-header");
+  const content = document.querySelector("main.content");
+  if (!titleBlock || !content) return;
+
+  const text = content.innerText.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  // A practical token estimate for English prose is roughly four characters per token.
+  const tokens = Math.round(text.length / 4);
+
+  const tools = document.createElement("div");
+  tools.className = "post-reading-tools";
+  tools.innerHTML = `
+    <span class="reading-stats">${minutes} min / ~${tokens.toLocaleString("en-US")} tok</span>
+    <button class="copy-markdown-button" type="button">Copy to markdown</button>
+  `;
+  titleBlock.append(tools);
+
+  const metadata = document.createElement("div");
+  metadata.className = "article-footer-meta";
+  metadata.append(
+    titleBlock.querySelector(".quarto-title-meta"),
+    titleBlock.querySelector(".quarto-categories")
+  );
+  content.append(metadata);
+
+  const markdown = () => {
+    const title = titleBlock.querySelector(".title")?.innerText.trim() || document.title;
+    const description = titleBlock.querySelector(".description")?.innerText.trim() || "";
+    const elements = content.querySelectorAll("h2, h3, h4, h5, h6, p, blockquote, pre");
+    const body = [...elements].map((element) => {
+      if (element.closest(".quarto-figure, .article-footer-meta")) return "";
+      const text = element.innerText.trim();
+      if (!text) return "";
+      if (/^H[2-6]$/.test(element.tagName)) {
+        return `${"#".repeat(Number(element.tagName[1]))} ${text}`;
+      }
+      if (element.tagName === "BLOCKQUOTE") return text.split("\n").map((line) => `> ${line}`).join("\n");
+      if (element.tagName === "PRE") return `\`\`\`\n${text}\n\`\`\``;
+      return text;
+    }).filter(Boolean).join("\n\n");
+    return `# ${title}${description ? `\n\n${description}` : ""}\n\n${body}\n`;
+  };
+
+  tools.querySelector(".copy-markdown-button").addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    try {
+      await navigator.clipboard.writeText(markdown());
+      button.textContent = "Copied!";
+      setTimeout(() => { button.textContent = "Copy to markdown"; }, 1600);
+    } catch {
+      button.textContent = "Copy failed";
+    }
+  });
+});
+</script>
