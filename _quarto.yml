@@ -8,7 +8,7 @@ project:
 website:
   title: "pumita's blog"
   description: "Reverse engineering, security & gaming notes"
-  site-url: "https://pumita.github.io/blog"
+  site-url: "https://blog.kike.wtf"
   navbar:
     pinned: false
     background: light
