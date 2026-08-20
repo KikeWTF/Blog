@@ -1,0 +1,27 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "posts/**"
+    - "!CONTRIBUTING.md"
+
+website:
+  title: "pumita's blog"
+  description: "Reverse engineering, security & gaming notes"
+  site-url: "https://pumita.github.io/blog"
+  navbar:
+    pinned: false
+    background: light
+    left:
+      - href: index.qmd
+        text: Home
+  page-footer:
+    center: "&copy; 2026 &middot; Kike Fontán"
+
+format:
+  html:
+    theme: flatly
+    css: styles.css
+    toc: false
+
+editor: visual
