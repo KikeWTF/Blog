@@ -1,14 +1,18 @@
 # Contributing to the Project
 
-> This document is addressed to **every person who touches this codebase** — human
-> or AI agent. Read it fully before making any change. There are no exceptions.
+> This document is addressed to **every person who touches this codebase** —
+> human or AI agent. Read it fully before making any change. There are no
+> exceptions.
+
+This is a Quarto static blog. Read `agents.md` as well when it is present: it
+is the living guide to the repository layout and development workflow.
 
 ---
 
 ## The golden rules
 
-These rules are non-negotiable. Violating any of them will require the
-work to be redone from scratch.
+These rules are non-negotiable. Violating any of them will require the work to
+be redone from scratch.
 
 ### 1. You never work on `main`
 
@@ -16,8 +20,8 @@ work to be redone from scratch.
 
 - **Never commit directly to `main`.**
 - **Never push to `main` directly.**
-- **Every single change**, no matter how small — a typo fix, a one-line tweak,
-  a dependency bump — goes on a dedicated branch first.
+- **Every single change**, no matter how small, goes on a dedicated branch
+  first.
 
 If you find yourself on `main` with uncommitted changes, stop. Stash them,
 create a branch, and apply them there:
@@ -38,11 +42,11 @@ merged automatically, speculatively, or "just to keep things tidy".
 - The only person who authorises a merge is the project lead.
 
 When a merge is authorised, always use `--no-ff` so the branch topology is
-preserved in the graph:
+preserved in the graph. The merge commit must also use the commit convention:
 
 ```bash
 git checkout main
-git merge --no-ff feat/my-feature -m "Merge branch 'feat/my-feature' into main"
+git merge --no-ff feat/my-feature -m "chore(site): merge my-feature branch"
 ```
 
 ### 3. Every commit and every branch must follow the naming convention
@@ -50,36 +54,20 @@ git merge --no-ff feat/my-feature -m "Merge branch 'feat/my-feature' into main"
 Consistency in naming makes the history readable at a glance. Deviating from
 the convention makes the history noisy and harder to audit.
 
-See the [Branch naming](#branch-naming) and [Commit messages](#commit-messages)
-sections below for the full rules.
+See [Branch naming](#branch-naming) and [Commit messages](#commit-messages)
+for the full rules.
 
-### 4. All checks must pass before any merge — no exceptions
+### 4. Render successfully before asking for a merge
 
-Before even asking for a merge, **every available check must be green**.
-This is not optional. A branch that does not pass all checks is not ready to
-merge, period.
-
-Run the full suite locally and fix everything before requesting the merge:
+Before asking for a merge, render the complete site locally:
 
 ```bash
-npm run check:test      # unit + integration tests — 0 failures required
-npm run check:types     # TypeScript — zero type errors
-npm run check:lint      # Biome linter — zero warnings
-npm run check:format    # Biome formatter — no diffs
-npm run check:deadcode  # Knip — no unused exports or files
+quarto render
 ```
 
-Or run them all at once:
-
-```bash
-npm run check
-```
-
-If **any** of these commands exits with a non-zero code, the branch is not
-mergeable. Fix the issues, commit the fixes on the same branch, and re-run
-until everything is clean. Do not ask for a merge with known failures, do not
-ask for exceptions, and do not skip a check because it "is not related to my
-change". All checks, always.
+The command must complete successfully. When changing layout, styles, or
+client-side reading tools, also inspect the rendered site in a browser at both
+desktop and mobile widths. Fix any problem before requesting a merge.
 
 ---
 
@@ -87,116 +75,102 @@ change". All checks, always.
 
 Branches follow the `type/short-description` pattern in **kebab-case**:
 
-```
-feat/ssl-detection
-fix/browser-close-on-error
-chore/remove-compile-scripts
-docs/contributing
-refactor/cli-flag-parsing
-test/skill-tool-coverage
+```text
+feat/add-post
+fix/markdown-image-export
+chore/update-quarto
+style/post-metadata-spacing
+docs/repository-guide
 ```
 
 | Prefix | When to use |
-|--------|-------------|
-| `feat/` | New feature or capability |
+|---|---|
+| `feat/` | New site capability or content feature |
 | `fix/` | Bug fix |
-| `chore/` | Maintenance — deps, config, tooling, cleanup |
+| `chore/` | Maintenance, configuration, tooling, or deployment |
 | `docs/` | Documentation only |
-| `refactor/` | Code restructure without behaviour change |
-| `style/` | Formatting, whitespace |
-| `test/` | Tests only |
-| `perf/` | Performance improvement |
-| `cybinn/` | Internal team R&D or experimental work |
+| `refactor/` | Restructure without behaviour change |
+| `style/` | Styling or formatting change |
 
 **Rules:**
-- Use only lowercase letters, numbers and hyphens. No slashes beyond the prefix.
-- Keep descriptions short and specific (`fix/ssl-warning` not `fix/stuff`).
-- One concern per branch. If you need to do two unrelated things, open two branches.
+
+- Use only lowercase letters, numbers, and hyphens. No slashes beyond the
+  prefix.
+- Keep descriptions short and specific (`fix/copy-markdown-images`, not
+  `fix/stuff`).
+- One concern per branch. If you need to do two unrelated things, open two
+  branches.
 
 ---
 
 ## Commit messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/) **strictly**.
-Every commit must have the format:
+Follow [Conventional Commits](https://www.conventionalcommits.org/) strictly.
+Every commit, including a merge commit, must have the format:
 
-```
+```text
 type(scope): short imperative description
 
 Optional body explaining *why*, not *what*.
 ```
 
-**The scope is mandatory. Never omit it.**
+The scope is mandatory. Never omit it.
 
-The description must be in the **imperative mood** ("add", "fix", "remove" — not
-"added", "fixes", "removing").
+The description must be in the imperative mood: use "add", "fix", or
+"remove", not "added", "fixes", or "removing".
 
-**AI Agent Rule: Never use `Co-Authored-By`**
-If you are an AI or LLM, you must NEVER append `Co-Authored-By:` trailers to commit messages (e.g. `Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>`). Just write the standard commit message body.
+**AI agent rule:** Never append `Co-Authored-By` trailers to commit messages.
 
 ### Types
 
 | Type | When to use |
-|------|-------------|
+|---|---|
 | `feat` | New feature or capability |
 | `fix` | Bug fix |
-| `chore` | Maintenance (deps, config, tooling) |
+| `chore` | Maintenance, configuration, or tooling |
 | `docs` | Documentation only |
-| `refactor` | Code restructure without behaviour change |
-| `style` | Formatting, whitespace |
-| `test` | Tests only |
-| `perf` | Performance improvement |
+| `refactor` | Restructure without behaviour change |
+| `style` | Styling or whitespace |
 
 ### Valid examples
 
-```
-feat(browser): add pre-flight SSL probe for self-signed cert detection
-fix(cli): remove accidental double blank line in formatHelp
-chore(deps): upgrade playwright to 1.62.0
-docs(agent): document Pi event order and loader timing
-test(skill): add directory traversal protection test cases
-refactor(core): extract probeSslError into standalone exported function
-```
-
-### Invalid examples — do not do this
-
-```
-fix stuff                          ← missing type and scope
-feat(ui): Added new logo           ← past tense, should be "add"
-update                             ← meaningless, no type, no scope
-WIP                                ← never commit WIP to a shared branch
-feat(browser): fix SSL and update deps and refactor cli   ← one commit, three concerns
+```text
+feat(posts): add reverse engineering article
+fix(markdown): export images with absolute URLs
+chore(pages): enable GitHub Pages deployment
+style(home): center listing titles
+docs(agents): update repository guide
 ```
 
-### Merge commits
+### Invalid examples
 
-Merge commits also follow the convention. The message is auto-generated when
-you use the `--no-ff` flag with `-m`:
-
-```bash
-git merge --no-ff feat/ssl-detection -m "Merge branch 'feat/ssl-detection' into main"
+```text
+fix stuff                         ← missing type and scope
+feat(posts): Added an article     ← past tense; use "add"
+update                            ← meaningless, no type, no scope
+WIP                               ← never commit WIP to a shared branch
+feat(site): fix styles and add post  ← separate unrelated concerns
 ```
 
 ---
 
 ## Workflow summary
 
+```text
+1. Start from an up-to-date main
+   git checkout main && git pull
+
+2. Create a dedicated branch
+   git checkout -b feat/my-feature
+
+3. Work and commit with meaningful Conventional Commit messages
+   git commit -m "feat(scope): do something specific"
+
+4. Validate the complete site
+   quarto render
+
+5. Push the branch and ask for an explicit merge approval
+   git push origin feat/my-feature
 ```
-1.  Start from an up-to-date main
-    git checkout main && git pull
 
-2.  Create a branch
-    git checkout -b feat/my-feature
-
-3.  Work, commit often with meaningful messages
-    git commit -m "feat(scope): do something specific"
-
-4.  Run all checks — fix until green
-    npm run check && npm run check:test
-
-5.  Push the branch (never main) and ask for a merge
-    git push origin feat/my-feature
-```
-
-That's it. No shortcuts.
-
+Do not merge or push to `main` without explicit authorisation.
