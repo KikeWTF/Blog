@@ -1,4 +1,4 @@
-# Repository guide for agents and contributors
+# Repository guide for agents
 
 > **Read [`CONTRIBUTING.md`](CONTRIBUTING.md) in full before making any change.**
 > Its branch, commit, test, merge, and push rules are mandatory for every human
@@ -6,7 +6,7 @@
 
 ## Keep this document alive
 
-This is a living map of the repository. Update `agents.md` in the same change
+This is a living map of the repository. Update `AGENTS.md` in the same change
 whenever work alters the project structure, development workflow, build or
 deployment process, generated files, or contributor-facing conventions. Remove
 information that is no longer true rather than leaving historical guesses.
@@ -20,10 +20,6 @@ publishes it through GitHub Pages at `https://blog.kike.wtf`.
 - **Development environment:** Nix flake, loaded by direnv through `.envrc`
 - **Hosting:** GitHub Pages
 - **Continuous deployment:** GitHub Actions
-
-There is currently no Node project or `package.json`; the `npm run check`
-commands mentioned in `CONTRIBUTING.md` are therefore not available. The
-available project validation is a successful Quarto render.
 
 ## Repository layout
 

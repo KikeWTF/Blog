@@ -4,9 +4,6 @@
 > human or AI agent. Read it fully before making any change. There are no
 > exceptions.
 
-This is a Quarto static blog. Read `agents.md` as well when it is present: it
-is the living guide to the repository layout and development workflow.
-
 ---
 
 ## The golden rules
