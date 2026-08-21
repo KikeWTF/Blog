@@ -30,16 +30,26 @@ window.addEventListener("DOMContentLoaded", () => {
     const title = titleBlock.querySelector(".title")?.innerText.trim() || document.title;
     const description = titleBlock.querySelector(".description")?.innerText.trim() || "";
     const elements = content.querySelectorAll("h2, h3, h4, h5, h6, p, blockquote, pre");
+    const imageMarkdown = (image) => {
+      const source = image.currentSrc || image.getAttribute("src");
+      if (!source) return "";
+      const url = new URL(source, document.baseURI).href;
+      const caption = image.closest("figure")?.querySelector("figcaption")?.innerText.trim() || "";
+      const alt = image.alt.trim() || caption;
+      return `![${alt}](${url})`;
+    };
     const body = [...elements].map((element) => {
-      if (element.closest(".quarto-figure, .article-footer-meta")) return "";
+      if (element.closest(".article-footer-meta") || (element.tagName === "P" && element.closest("blockquote"))) return "";
       const text = element.innerText.trim();
-      if (!text) return "";
+      const images = [...element.querySelectorAll("img")]
+        .map(imageMarkdown)
+        .filter(Boolean);
       if (/^H[2-6]$/.test(element.tagName)) {
         return `${"#".repeat(Number(element.tagName[1]))} ${text}`;
       }
       if (element.tagName === "BLOCKQUOTE") return text.split("\n").map((line) => `> ${line}`).join("\n");
       if (element.tagName === "PRE") return `\`\`\`\n${text}\n\`\`\``;
-      return text;
+      return [text, ...images].filter(Boolean).join("\n\n");
     }).filter(Boolean).join("\n\n");
     return `# ${title}${description ? `\n\n${description}` : ""}\n\n${body}\n`;
   };
